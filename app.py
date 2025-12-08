@@ -143,9 +143,9 @@ def apply_theme():
     
     st.markdown(f"""
         <style>
-        /* Increase base font size for all text */
+        /* Base font size for all text */
         html, body, [class*="css"] {{
-            font-size: 20px !important;
+            font-size: 16px !important;
         }}
         
         /* Remove white space at top */
@@ -181,6 +181,7 @@ def apply_theme():
         /* All text elements */
         p, div, span, label {{
             color: {text_color} !important;
+            font-size: 16px !important;
         }}
         
         /* Headings */
@@ -189,9 +190,9 @@ def apply_theme():
             font-weight: 700 !important;
         }}
         
-        h1 {{ font-size: 2.5rem !important; }}
-        h2 {{ font-size: 2rem !important; }}
-        h3 {{ font-size: 1.75rem !important; }}
+        h1 {{ font-size: 2rem !important; }}
+        h2 {{ font-size: 1.5rem !important; }}
+        h3 {{ font-size: 1.25rem !important; }}
         
         /* Sidebar styling */
         [data-testid="stSidebar"] {{
@@ -220,7 +221,7 @@ def apply_theme():
         .stTextInput input, .stTextArea textarea {{
             background-color: {input_bg} !important;
             color: {input_text} !important;
-            font-size: 18px !important;
+            font-size: 14px !important;
             border: 1px solid {border_color} !important;
         }}
         
@@ -231,20 +232,20 @@ def apply_theme():
         
         /* Labels */
         label {{
-            font-size: 18px !important;
+            font-size: 14px !important;
             font-weight: 600 !important;
             color: {text_color} !important;
         }}
         
         /* Markdown content */
         .stMarkdown {{
-            font-size: 18px !important;
+            font-size: 15px !important;
             color: {text_color} !important;
         }}
         
         /* Info/warning/error messages */
         .stAlert {{
-            font-size: 18px !important;
+            font-size: 14px !important;
         }}
         
         /* File uploader - dark background in dark mode */
@@ -324,7 +325,7 @@ def apply_theme():
             transition: all 0.3s ease;
             border: none;
             color: {text_color} !important;
-            font-size: 18px !important;
+            font-size: 15px !important;
             display: flex;
             align-items: center;
         }}
@@ -347,9 +348,9 @@ def apply_theme():
         
         /* Buttons - Fix text color for readability */
         .stButton > button {{
-            font-size: 18px !important;
+            font-size: 14px !important;
             font-weight: 600 !important;
-            padding: 0.75rem 1.5rem !important;
+            padding: 0.6rem 1.2rem !important;
             outline: none !important;
         }}
         
@@ -384,7 +385,7 @@ def apply_theme():
             color: {button_text} !important;
             background-color: {button_bg} !important;
             border: 1px solid #4a5568 !important;  /* Gray border instead of purple */
-            font-size: 18px !important;
+            font-size: 14px !important;
             outline: none !important;
         }}
         
