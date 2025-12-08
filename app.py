@@ -145,7 +145,7 @@ def apply_theme():
         <style>
         /* Base font size for all text */
         html, body, [class*="css"] {{
-            font-size: 16px !important;
+            font-size: 14px !important;
         }}
         
         /* Remove white space at top */
@@ -181,7 +181,7 @@ def apply_theme():
         /* All text elements */
         p, div, span, label {{
             color: {text_color} !important;
-            font-size: 16px !important;
+            font-size: 14px !important;
         }}
         
         /* Headings */
@@ -190,9 +190,9 @@ def apply_theme():
             font-weight: 700 !important;
         }}
         
-        h1 {{ font-size: 2rem !important; }}
-        h2 {{ font-size: 1.5rem !important; }}
-        h3 {{ font-size: 1.25rem !important; }}
+        h1 {{ font-size: 1.75rem !important; }}
+        h2 {{ font-size: 1.35rem !important; }}
+        h3 {{ font-size: 1.15rem !important; }}
         
         /* Sidebar styling */
         [data-testid="stSidebar"] {{
@@ -221,7 +221,7 @@ def apply_theme():
         .stTextInput input, .stTextArea textarea {{
             background-color: {input_bg} !important;
             color: {input_text} !important;
-            font-size: 14px !important;
+            font-size: 13px !important;
             border: 1px solid {border_color} !important;
         }}
         
@@ -232,20 +232,20 @@ def apply_theme():
         
         /* Labels */
         label {{
-            font-size: 14px !important;
+            font-size: 13px !important;
             font-weight: 600 !important;
             color: {text_color} !important;
         }}
         
         /* Markdown content */
         .stMarkdown {{
-            font-size: 15px !important;
+            font-size: 14px !important;
             color: {text_color} !important;
         }}
         
         /* Info/warning/error messages */
         .stAlert {{
-            font-size: 14px !important;
+            font-size: 13px !important;
         }}
         
         /* File uploader - dark background in dark mode */
@@ -348,9 +348,9 @@ def apply_theme():
         
         /* Buttons - Fix text color for readability */
         .stButton > button {{
-            font-size: 14px !important;
+            font-size: 13px !important;
             font-weight: 600 !important;
-            padding: 0.6rem 1.2rem !important;
+            padding: 0.5rem 1rem !important;
             outline: none !important;
         }}
         
