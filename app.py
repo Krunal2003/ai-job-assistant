@@ -591,8 +591,6 @@ elif page == "Generate Materials":
     with col2:
         candidate_name = st.text_input("Your Name *", placeholder="e.g., John Doe")
         
-        st.warning("⚠️ **IMPORTANT**: If you uploaded a resume above, LEAVE THIS BOX EMPTY. Text here overrides your uploaded files.")
-        
         # Initialize key if not exists
         if "resume_manual_input" not in st.session_state:
             st.session_state.resume_manual_input = ""
