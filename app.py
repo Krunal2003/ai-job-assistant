@@ -579,39 +579,44 @@ elif page == "Generate Materials":
         st.warning("No documents indexed yet. Please go to 'Setup Documents' to upload your background information first.")
         st.stop()
     
-    # Input form
-    with st.form("job_details_form"):
-        st.subheader("Job Details")
-        
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            company_name = st.text_input("Company Name *", placeholder="e.g., Google")
-            role_title = st.text_input("Role Title *", placeholder="e.g., Senior Software Engineer")
-        
-        with col2:
-            candidate_name = st.text_input("Your Name *", placeholder="e.g., John Doe")
-            
-            st.warning("⚠️ **IMPORTANT**: If you uploaded a resume above, LEAVE THIS BOX EMPTY. Text here overrides your uploaded files.")
-            resume_content = st.text_area(
-                "Your Current Resume (Manual Paste)",
-                placeholder="Paste your resume text here ONLY if you didn't upload a file...",
-                height=100,
-                help="WARNING: Content here will override uploaded resume documents."
-            )
-            if st.button("Clear Resume Text", key="clear_resume_text"):
-                resume_content = ""
-                st.rerun()
-        
-        job_description = st.text_area(
-            "Job Description *",
-            placeholder="Paste the complete job description here...",
-            height=300,
-            help="Include the full job posting with requirements, responsibilities, and qualifications."
-        )
-        
-        submit_button = st.form_submit_button("Generate All Materials", type="primary")
+    # Input form - Removed st.form to allow clear button
+    st.subheader("Job Details")
     
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        company_name = st.text_input("Company Name *", placeholder="e.g., Google")
+        role_title = st.text_input("Role Title *", placeholder="e.g., Senior Software Engineer")
+    
+    with col2:
+        candidate_name = st.text_input("Your Name *", placeholder="e.g., John Doe")
+        
+        st.warning("⚠️ **IMPORTANT**: If you uploaded a resume above, LEAVE THIS BOX EMPTY. Text here overrides your uploaded files.")
+        
+        # Initialize key if not exists
+        if "resume_manual_input" not in st.session_state:
+            st.session_state.resume_manual_input = ""
+
+        resume_content = st.text_area(
+            "Your Current Resume (Manual Paste)",
+            placeholder="Paste your resume text here ONLY if you didn't upload a file...",
+            height=100,
+            help="WARNING: Content here will override uploaded resume documents.",
+            key="resume_manual_input"
+        )
+        if st.button("Clear Resume Text", key="clear_resume_text"):
+            st.session_state.resume_manual_input = ""
+            st.rerun()
+    
+    job_description = st.text_area(
+        "Job Description *",
+        placeholder="Paste the complete job description here...",
+        height=300,
+        help="Include the full job posting with requirements, responsibilities, and qualifications."
+    )
+    
+    submit_button = st.button("Generate All Materials", type="primary")
+
     # Generate materials
     if submit_button:
         if not all([job_description, company_name, role_title, candidate_name]):
