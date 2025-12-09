@@ -34,7 +34,13 @@ class RAGPipeline:
             self.client = chroma_client
         else:
             # Default to a persistent client in the data directory
-            data_path = os.path.join(os.getcwd(), "job-assistant", "data", "chroma_db")
+            # Use path relative to this file to ensure consistency regardless of CWD
+            from pathlib import Path
+            current_dir = Path(__file__).parent.absolute()
+            project_root = current_dir.parent
+            data_path = str(project_root / "data" / "chroma_db")
+            
+            logger.info(f"Using ChromaDB path: {data_path}")
             self.client = chromadb.PersistentClient(path=data_path)
             
         self.embedding_model = OpenAIEmbeddings(
@@ -102,13 +108,13 @@ class RAGPipeline:
                 logger.error("Failed to generate embeddings. Aborting add_documents.")
                 return
 
-            self.collection.add(
+            self.collection.upsert(
                 documents=texts,
                 embeddings=embeddings,
                 metadatas=metadatas,
                 ids=ids
             )
-            logger.info(f"Added {len(chunks)} chunks to collection '{self.collection_name}'.")
+            logger.info(f"Added/Updated {len(chunks)} chunks in collection '{self.collection_name}'.")
         except Exception as e:
             logger.error(f"Failed to add documents to vector store: {e}")
 
@@ -152,8 +158,31 @@ class RAGPipeline:
         Delete and recreate the collection.
         """
         try:
-            self.client.delete_collection(self.collection_name)
+            try:
+                self.client.delete_collection(self.collection_name)
+                logger.info(f"Collection '{self.collection_name}' deleted.")
+            except ValueError:
+                # Collection might not exist, which is fine
+                logger.info(f"Collection '{self.collection_name}' did not exist, skipping delete.")
+            except Exception as e:
+                logger.warning(f"Error deleting collection: {e}. Attempting to recreate anyway.")
+            
             self.setup_vectorstore()
-            logger.info(f"Collection '{self.collection_name}' reset.")
+            logger.info(f"Collection '{self.collection_name}' reset successfully.")
         except Exception as e:
             logger.error(f"Failed to reset vector store: {e}")
+
+    def get_collection_count(self) -> int:
+        """
+        Get the number of documents in the collection.
+        
+        Returns:
+            int: Number of items in the collection.
+        """
+        try:
+            if self.collection:
+                return self.collection.count()
+            return 0
+        except Exception as e:
+            logger.error(f"Failed to get collection count: {e}")
+            return 0

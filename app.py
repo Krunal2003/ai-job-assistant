@@ -451,6 +451,11 @@ with st.sidebar:
         st.session_state.dark_mode = not st.session_state.dark_mode
         st.rerun()
 
+    st.markdown("---")
+    if st.button("🔄 Factory Reset App", type="secondary", help="Clear all data and reset application state.", use_container_width=True):
+        st.session_state.clear()
+        st.rerun()
+
 
 # Clean up page names for logic
 page = page.replace("📄 ", "").replace("✨ ", "").replace("ℹ️ ", "")
@@ -473,6 +478,8 @@ if page == "Setup Documents":
         help="Upload your resume, cover letters, project descriptions, or any relevant documents."
     )
     
+    clear_existing = st.checkbox("Clear existing documents", value=True, help="Remove previously indexed documents before processing new ones.")
+    
     col1, col2 = st.columns([3, 1])
     
     with col1:
@@ -482,6 +489,12 @@ if page == "Setup Documents":
             else:
                 with st.spinner("Processing documents..."):
                     try:
+                        # Clear existing if requested
+                        if clear_existing:
+                            st.session_state.rag_pipeline.reset_vectorstore()
+                            st.session_state.documents_indexed = False
+                            st.session_state.indexed_files = []
+
                         # Create temporary directory for uploaded files
                         temp_dir = tempfile.mkdtemp()
                         loader = DocumentLoader(temp_dir)
@@ -509,12 +522,33 @@ if page == "Setup Documents":
                             
                             # Update session state
                             st.session_state.documents_indexed = True
-                            st.session_state.indexed_files = [f.name for f in uploaded_files]
+                            if clear_existing:
+                                st.session_state.indexed_files = [f.name for f in uploaded_files]
+                            else:
+                                st.session_state.indexed_files.extend([f.name for f in uploaded_files])
+                                # Remove duplicates while preserving order
+                                seen = set()
+                                st.session_state.indexed_files = [x for x in st.session_state.indexed_files if not (x in seen or seen.add(x))]
                             
                             st.success(f"Successfully indexed {len(all_chunks)} chunks from {len(documents)} documents!")
                             
                     except Exception as e:
                         st.error(f"Error processing documents: {str(e)}")
+    
+    # Display current stats
+    st.markdown("---")
+    st.subheader("Database Stats")
+    
+    if st.session_state.rag_pipeline:
+        chunk_count = st.session_state.rag_pipeline.get_collection_count()
+        st.info(f"Total Chunks in Vector Store: **{chunk_count}**")
+        
+        if chunk_count > 0:
+            if st.button("⚠️ Hard Reset Database", help="Force delete all data. Use if standard clear fails."):
+                st.session_state.rag_pipeline.reset_vectorstore()
+                st.session_state.documents_indexed = False
+                st.session_state.indexed_files = []
+                st.rerun()
     
     with col2:
         if st.button("Reset Vector Store", type="secondary"):
@@ -557,12 +591,17 @@ elif page == "Generate Materials":
         
         with col2:
             candidate_name = st.text_input("Your Name *", placeholder="e.g., John Doe")
+            
+            st.warning("⚠️ **IMPORTANT**: If you uploaded a resume above, LEAVE THIS BOX EMPTY. Text here overrides your uploaded files.")
             resume_content = st.text_area(
-                "Your Current Resume (for ATS Analysis)",
-                placeholder="Paste your current resume text here...",
+                "Your Current Resume (Manual Paste)",
+                placeholder="Paste your resume text here ONLY if you didn't upload a file...",
                 height=100,
-                help="This is used for ATS analysis to compare against the job description."
+                help="WARNING: Content here will override uploaded resume documents."
             )
+            if st.button("Clear Resume Text", key="clear_resume_text"):
+                resume_content = ""
+                st.rerun()
         
         job_description = st.text_area(
             "Job Description *",
